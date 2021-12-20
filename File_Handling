@@ -1,0 +1,140 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+struct student
+{
+    char name[20], div[20], add[20], branch[20];
+    int roll_no;
+};
+void accept(struct student s[5], int n);
+void display(struct student s[5], int n);
+void student_file(struct student s[5], int n);
+void delete(struct student s[5], int n);
+
+int main()
+{
+    struct student s[5];
+    int n, option;
+    printf("Enter the number of students : ");
+    scanf("%d", &n);
+    do
+    {
+        printf("\n1. Create \n2. Display \n3. Delete Data\n4. Add Data to Current File\n0. Exit");
+        printf("\nEnter the choice : ");
+        scanf("%d", &option);
+        // student_file(s,n);
+        switch (option)
+        {
+        case 1:
+            accept(s, n);
+            student_file(s, n);
+            break;
+        case 2:
+            display(s, n);
+            break;
+        case 3:
+            delete(s, n);
+            break;
+        case 4:
+            accept(s, n);
+            student_file(s, n);
+            break;
+        default:
+            printf("Invalid input try again\n");
+        }
+
+    } while (option != 0);
+}
+void accept(struct student s[5], int n)
+{
+    int i;
+    for (i = 0; i < n; i++)
+    {
+        printf("Enter the name of student : ");
+        scanf("%s", s[i].name);
+        printf("Enter the Branch of student : ");
+        scanf("%s", s[i].branch);
+        printf("Enter the Division of student : ");
+        scanf("%s", s[i].div);
+        printf("Enter the Address of student : ");
+        scanf("%s", s[i].add);
+        printf("Enter the Roll Number of student : ");
+        scanf("%d", &s[i].roll_no);
+    }
+}
+void student_file(struct student s[5], int n)
+{
+    int i;
+    FILE *stud;
+    stud = fopen("Student_Data.txt", "a");
+    if (stud == NULL)
+    {
+        printf("Error");
+    }
+    else
+    {
+        for (i = 0; i < n; i++)
+        {
+            fprintf(stud, "%s %s %s %s %d", s[i].name, s[i].branch, s[i].div, s[i].add, s[i].roll_no);
+            fputs("\n", stud);
+        }
+    }
+    fclose(stud);
+}
+void display(struct student s[5], int n)
+{
+    
+    int i;
+    FILE *stud;
+    char c;
+    stud = fopen("Student_Data.txt", "r");
+    c = fgetc(stud);
+    if (stud == NULL)
+    {
+        printf("File does not exist");
+    }
+    else
+    {
+        while (c != EOF)
+        {
+            printf("%c", c);
+            c = fgetc(stud);
+        }
+        fclose(stud);
+    }
+}
+
+void delete(struct student s[5], int n)
+{
+    int i;
+    FILE *stud;
+    stud = fopen("Student_Data.txt", "r");
+    int count=0;
+    char c= getc(stud);
+    while(c!=EOF)
+    {
+        if (c=='\n')
+        count++;
+        c=getc(stud); 
+    }
+    rewind(stud);
+    int num;
+    printf("Enter the Roll No. of student to delete data : ");
+    scanf("%d",&num);
+    for(i=0;i<count;i++){
+        fscanf(stud, "%s %s %s %s %d", s[i].name, s[i].branch, s[i].div, s[i].add, &s[i].roll_no);
+
+    }
+    FILE *del;
+    del = fopen("Student_Data.txt", "w");    
+    for(i=0;i<count;i++){
+        if(s[i].roll_no == num)
+        continue;
+        fprintf(del, "\n%s %s %s %s %d", s[i].name, s[i].branch, s[i].div, s[i].add, s[i].roll_no);
+            fputs("\n", stud);
+
+    }
+    fclose(stud);
+    fclose(del);
+}
